@@ -5,18 +5,18 @@ A Kong plugin that enables an extra HTTP POST request before proxying the origin
 based on https://github.com/pantsel/kong-middleman-plugin and https://github.com/mdemou/kong-middleman
 
 list of change :
-    - Update for kong v2
-    - Update schema for v2
-        - add config for include certificate (default false)
-        - add config for include credential (default false)
-        - add config for include route (default false)
-    - change payload :
-        - add certificate (resty_kong_tls.get_full_client_certificate_chain())
-        - add credential (kong.client.get_credential())
-        - add route (kong.router.get_route() and kong.router.get_service())
-        - rename uri_args to params
-        - rename body data to body
-        - don't json.encode if headers["content-type"] == 'application/json'
+- Update for kong v2
+- Update schema for v2
+	- add config for include certificate (default false)
+    - add config for include credential (default false)
+    - add config for include route (default false)
+ - change payload :
+ 	- add certificate (resty_kong_tls.get_full_client_certificate_chain())
+    - add credential (kong.client.get_credential())
+    - add route (kong.router.get_route() and kong.router.get_service())
+    - rename uri_args to params
+    - rename body data to body
+    - no json.encode if headers["content-type"] == 'application/json'
 
 payload :
 ```lua
