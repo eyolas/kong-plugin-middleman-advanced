@@ -8,13 +8,21 @@ return {
     { config = {
         type = "record",
         fields = {
-          { url = {required = true, type = "string"}, },
-          { response = { required = true, default = "table", type = "string", one_of = {"table", "string"}}, },
-          { timeout = { default = 10000, type = "number" }, },
-          { keepalive = { default = 60000, type = "number" }, },
-          { include_cert = { default = false, type = "boolean" }, },
-          { include_credential = { default = false, type = "boolean" }, },
-          { include_route = { default = false, type = "boolean"}, },
+          { services = {
+            type = "array",
+            elements = {
+              type = "record",
+              fields = {
+                { url = {required = true, type = "string"}, },
+                { response = { required = true, default = "table", type = "string", one_of = {"table", "string"}}, },
+                { timeout = { default = 10000, type = "number" }, },
+                { keepalive = { default = 60000, type = "number" }, },
+                { include_cert = { default = false, type = "boolean" }, },
+                { include_credential = { default = false, type = "boolean" }, },
+                { include_route = { default = false, type = "boolean"}, },
+              }
+            },
+          }, }
         }
       }
     }

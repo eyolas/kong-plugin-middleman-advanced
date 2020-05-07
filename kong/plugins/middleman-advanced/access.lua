@@ -35,11 +35,7 @@ local function parse_url(host_url)
   return parsed_url
 end
 
-function _M.execute(conf)
-  if not conf.run_on_preflight and get_method() == "OPTIONS" then
-    return
-  end
-
+local function send(conf)
   local name = "[middleman-advanced] "
   local ok, err
   local parsed_url = parse_url(conf.url)
@@ -53,7 +49,7 @@ function _M.execute(conf)
   ok, err = sock:connect(host, port)
   if not ok then
     ngx.log(ngx.ERR, name .. "failed to connect to " .. host .. ":" .. tostring(port) .. ": ", err)
-    return
+    return false, nil, nil
   end
 
   if parsed_url.scheme == HTTPS then
@@ -72,7 +68,7 @@ function _M.execute(conf)
 
   if err then
     ngx.log(ngx.ERR, name .. "failed to read response status from " .. host .. ":" .. tostring(port) .. ": ", err)
-    return
+    return false, nil, nil
   end
 
   local status_code = tonumber(string.match(line, "%s(%d%d%d)%s"))
@@ -82,7 +78,7 @@ function _M.execute(conf)
     line, err = sock:receive("*l")
     if err then
       ngx.log(ngx.ERR, name .. "failed to read header " .. host .. ":" .. tostring(port) .. ": ", err)
-      return
+      return false, nil, nil
     end
 
     local pair = ngx_re_match(line, "(.*):\\s*(.*)", "jo")
@@ -95,13 +91,13 @@ function _M.execute(conf)
   local body, err = sock:receive(tonumber(headers['content-length']))
   if err then
     ngx.log(ngx.ERR, name .. "failed to read body " .. host .. ":" .. tostring(port) .. ": ", err)
-    return
+    return false, nil, nil
   end
 
   ok, err = sock:setkeepalive(conf.keepalive)
   if not ok then
     ngx.log(ngx.ERR, name .. "failed to keepalive to " .. host .. ":" .. tostring(port) .. ": ", err)
-    return
+    return false, nil, nil
   end
 
   if status_code > 299 then
@@ -116,9 +112,18 @@ function _M.execute(conf)
       response_body = string.match(body, "%b{}")
     end
 
-    return kong_response.exit(status_code, response_body)
+    return true, status_code, response_body
   end
+end
 
+
+function _M.execute(conf)
+  for i, config in pairs(conf.services) do
+    local b, code, body = send(config)
+    if b then
+      return kong_response.exit(code, body)
+    end
+  end
 end
 
 function _M.compose_payload(parsed_url, conf)
