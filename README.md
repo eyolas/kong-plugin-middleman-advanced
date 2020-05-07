@@ -23,6 +23,10 @@ payload :
  local payload_body = [[{"certificate":]] .. raw_cert .. [[,"credential":]] .. raw_credential ..  [[,"kong_routing":]] .. raw_kong_routing .. [[,"request": {"headers":]] .. raw_json_headers .. [[,"params":]] .. raw_json_uri_args .. [[,"body":]] .. raw_json_body_data .. [[}}]]
  ```
 
+roadmap:
+upgrade json.lua
+change config for list of service
+
 
 ## Description
 
