@@ -17,6 +17,7 @@ list of change :
     - rename uri_args to params
     - rename body data to body
     - no json.encode if headers["content-type"] == 'application/json'
+    - move body, headers and params in request field
 
 payload :
 ```lua
@@ -24,8 +25,8 @@ payload :
  ```
 
 roadmap:
-upgrade json.lua
-change config for list of service
+- upgrade json.lua
+- change config for list of service
 
 
 ## Description
