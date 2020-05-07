@@ -111,7 +111,7 @@ function _M.execute(conf)
 
     local response_body
     if conf.response == "table" then
-      response_body = JSON:decode(string.match(body, "%b{}"))
+      response_body = JSON.decode(string.match(body, "%b{}"))
     else
       response_body = string.match(body, "%b{}")
     end
@@ -139,62 +139,62 @@ function _M.compose_payload(parsed_url, conf)
       url = parsed_url.path
     end
 
-    local raw_json_headers = JSON:encode(headers)
+    local raw_json_headers = JSON.encode(headers)
     local raw_json_body_data
     if headers["content-type"] == 'application/json' then
       raw_json_body_data = body_data
     else
-      raw_json_body_data = JSON:encode(body_data)
+      raw_json_body_data = JSON.encode(body_data)
     end
 
     local raw_credential
     if conf.include_credential then
       local credential = kong.client.get_credential()
       if credential then
-        raw_credential = JSON:encode(credential)
+        raw_credential = JSON.encode(credential)
       end
     end
 
     local raw_cert
     if conf.include_cert then
       local pem, err = resty_kong_tls.get_full_client_certificate_chain()
-      raw_cert = JSON:encode(pem)
+      raw_cert = JSON.encode(pem)
     end
 
     local raw_kong_routing
     if conf.include_route then
-      local raw_route = JSON:encode(kong.router.get_route())
-      local raw_service = JSON:encode(kong.router.get_service())
+      local raw_route = JSON.encode(kong.router.get_route())
+      local raw_service = JSON.encode(kong.router.get_service())
 
       raw_kong_routing = [[{"route":]] .. raw_route ..  [[,"service":]] .. raw_service ..  [[}]]
     end
 
     local raw_json_uri_args
     if next(uri_args) then
-      raw_json_uri_args = JSON:encode(uri_args)
+      raw_json_uri_args = JSON.encode(uri_args)
     end
 
     --
     -- guard nil
     --
     if raw_json_body_data == nil then
-      raw_json_body_data = JSON:encode(raw_json_body_data)
+      raw_json_body_data = JSON.encode(raw_json_body_data)
     end
 
     if raw_credential == nil then
-      raw_credential = JSON:encode(raw_credential)
+      raw_credential = JSON.encode(raw_credential)
     end
 
     if raw_cert == nil then
-      raw_cert = JSON:encode(raw_cert)
+      raw_cert = JSON.encode(raw_cert)
     end
 
     if raw_kong_routing == nil then
-      raw_kong_routing = JSON:encode(raw_kong_routing)
+      raw_kong_routing = JSON.encode(raw_kong_routing)
     end
 
     if raw_json_uri_args == nil then
-      raw_json_uri_args = JSON:encode(raw_json_uri_args)
+      raw_json_uri_args = JSON.encode(raw_json_uri_args)
     end
 
 

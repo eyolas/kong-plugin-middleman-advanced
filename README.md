@@ -6,6 +6,7 @@ based on https://github.com/pantsel/kong-middleman-plugin and https://github.com
 
 list of change :
 - Update for kong v2
+- move json.lua to https://github.com/rxi/json.lua
 - Update schema for v2
 	- add config for include certificate (default false)
     - add config for include credential (default false)
@@ -19,13 +20,13 @@ list of change :
     - no json.encode if headers["content-type"] == 'application/json'
     - move body, headers and params in request field
 
+
 payload :
 ```lua
  local payload_body = [[{"certificate":]] .. raw_cert .. [[,"credential":]] .. raw_credential ..  [[,"kong_routing":]] .. raw_kong_routing .. [[,"request": {"headers":]] .. raw_json_headers .. [[,"params":]] .. raw_json_uri_args .. [[,"body":]] .. raw_json_body_data .. [[}}]]
  ```
 
 roadmap:
-- upgrade json.lua
 - change config for list of service
 
 
