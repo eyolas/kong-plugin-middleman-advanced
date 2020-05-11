@@ -7,9 +7,12 @@ return {
     { protocols = typedefs.protocols_http },
     { config = {
         type = "record",
+        required = true,
         fields = {
           { services = {
             type = "array",
+            required = true,
+            len_min = 1,
             elements = {
               type = "record",
               fields = {
