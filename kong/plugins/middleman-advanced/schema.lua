@@ -22,6 +22,7 @@ return {
                 { keepalive = { default = 60000, type = "number" }, },
                 { include_cert = { default = false, type = "boolean" }, },
                 { include_credential = { default = false, type = "boolean" }, },
+                { include_consumer = { default = false, type = "boolean"}, },
                 { include_route = { default = false, type = "boolean"}, },
               }
             },

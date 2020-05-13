@@ -160,6 +160,14 @@ function _M.compose_payload(parsed_url, conf)
       end
     end
 
+    local raw_consumer
+    if conf.include_consumer then
+      local consumer = kong.client.get_consumer()
+      if consumer then
+        raw_consumer = JSON.encode(consumer)
+      end
+    end
+
     local raw_cert
     if conf.include_cert then
       local pem, err = resty_kong_tls.get_full_client_certificate_chain()
@@ -202,8 +210,12 @@ function _M.compose_payload(parsed_url, conf)
       raw_json_uri_args = JSON.encode(raw_json_uri_args)
     end
 
+    if raw_consumer == nil then
+      raw_consumer = JSON.encode(raw_consumer)
+    end
 
-    local payload_body = [[{"certificate":]] .. raw_cert .. [[,"credential":]] .. raw_credential ..  [[,"kong_routing":]] .. raw_kong_routing .. [[,"request": {"headers":]] .. raw_json_headers .. [[,"params":]] .. raw_json_uri_args .. [[,"body":]] .. raw_json_body_data .. [[}}]]
+
+    local payload_body = [[{"certificate":]] .. raw_cert .. [[,"consumer":]] .. raw_consumer .. [[,"credential":]] .. raw_credential ..  [[,"kong_routing":]] .. raw_kong_routing .. [[,"request": {"headers":]] .. raw_json_headers .. [[,"params":]] .. raw_json_uri_args .. [[,"body":]] .. raw_json_body_data .. [[}}]]
 
     local payload_headers = string_format(
       "POST %s HTTP/1.1\r\nHost: %s\r\nConnection: Keep-Alive\r\nContent-Type: application/json\r\nContent-Length: %s\r\n",

@@ -11,10 +11,12 @@ list of change :
 	- add config for include certificate (default false)
     - add config for include credential (default false)
     - add config for include route (default false)
+    - add config for include consumer (default false)
  - change payload :
  	- add certificate (resty_kong_tls.get_full_client_certificate_chain())
     - add credential (kong.client.get_credential())
     - add route (kong.router.get_route() and kong.router.get_service())
+    - add consumer (kong.client.get_consumer())
     - rename uri_args to params
     - rename body data to body
     - no json.encode if headers["content-type"] == 'application/json'
@@ -46,14 +48,9 @@ WIP
 
 You can add the plugin on top of an API by executing the following request on your Kong server:
 
-<pre>
-$ curl -X POST http://kong:8001/apis/{api}/plugins \
-    --data "name=middleman-advanced" \
-    --data "config.url=http://myserver.io/validate"
-    --data "config.response=table"
-    --data "config.timeout=10000"
-    --data "config.keepalive=60000"
-</pre>
+```sh
+$ http POST :8001/services/{api}/plugins name=middleman-advanced config:='{ "services": [{"url": "http://myserver.io/validate", "response": "table", "timeout": 10000, "keepalive": 60000}]}'
+```
 
 <table><thead>
 <tr>
