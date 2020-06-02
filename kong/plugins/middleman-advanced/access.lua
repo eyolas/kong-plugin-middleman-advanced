@@ -134,6 +134,7 @@ function _M.compose_payload(parsed_url, conf)
     read_body()
     local body_data = get_body()
 
+    headers["target_path"] = kong.request.get_path()
     headers["target_uri"] = ngx.var.request_uri
     headers["target_method"] = ngx.var.request_method
 
