@@ -10,11 +10,6 @@ local string_format = string.format
 
 local _M = {}
 
--- when nil so encode to null
-local function guardJson(val)
-  if val == nil then return JSON.encode(val) else return val end
-end
-
 function _M.compose_payload(parsed_url, conf)
   local headers = get_headers()
   local uri_args = get_uri_args()
@@ -75,14 +70,14 @@ function _M.compose_payload(parsed_url, conf)
 
 
   local payload = {
-    ['certificate'] = guardJson(certificate),
-    ['consumer'] = guardJson(consumer),
-    ['credential'] = guardJson(credential),
-    ['kong_routing'] = guardJson(kong_routing),
+    ['certificate'] = certificate,
+    ['consumer'] = consumer,
+    ['credential'] = credential,
+    ['kong_routing'] = kong_routing,
     ['request'] = {
-      ['headers'] = guardJson(headers),
-      ['params'] = guardJson(params),
-      ['body'] = guardJson(json_body)
+      ['headers'] = headers,
+      ['params'] = params,
+      ['body'] = json_body,
     }
   }
 
