@@ -2,7 +2,6 @@ local BasePlugin = require "kong.plugins.base_plugin"
 local access = require "kong.plugins.middleman-advanced.access"
 local kong_tls = require "resty.kong.tls"
 
-
 local MiddlemanAdvancedHandler = BasePlugin:extend()
 
 MiddlemanAdvancedHandler.PRIORITY = 900
@@ -25,8 +24,7 @@ function MiddlemanAdvancedHandler:init_worker()
 
     local res, err = kong_tls.request_client_certificate()
     if not res then
-      kong.log.err("unable to request client to present its certificate: ",
-                     err)
+      kong.log.err("unable to request client to present its certificate: ", err)
     end
 
     -- disable session resumption to prevent inability to access client
@@ -35,7 +33,7 @@ function MiddlemanAdvancedHandler:init_worker()
     res, err = kong_tls.disable_session_reuse()
     if not res then
       kong.log.err("unable to disable session reuse for client certificate: ",
-                     err)
+                   err)
     end
   end
 
