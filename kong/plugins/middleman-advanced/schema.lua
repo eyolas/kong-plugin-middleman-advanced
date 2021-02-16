@@ -11,7 +11,8 @@ return {
           {
             services = {
               type = "array",
-              required = false,
+              required = true,
+              len_min = 1,
               elements = {
                 type = "record",
                 fields = {
