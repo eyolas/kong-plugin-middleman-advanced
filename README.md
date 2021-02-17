@@ -1,8 +1,17 @@
 # Kong Middleman advanced
 
-A Kong plugin that enables an extra HTTP POST request before proxying the original.
+A Kong plugin that enables an extra HTTP POST requests before proxying the original.
 
 based on https://github.com/pantsel/kong-middleman-plugin and https://github.com/mdemou/kong-middleman
+
+
+
+## Description
+
+In some cases, you may need to validate a request to a separate server or service using custom logic before Kong proxies it to your API.
+Middleman enables you to do that by allowing you to make an extra HTTP requests before calling an API endpoint.
+
+## Change from the original plugin
 
 list of change :
 - Update for kong v2
@@ -37,15 +46,6 @@ local payload = {
     }
   }
 ```
-
-
-## Description
-
-In some cases, you may need to validate a request to a separate server or service using custom logic before Kong proxies it to your API.
-Middleman enables you to do that by allowing you to make an extra HTTP requests before calling an API endpoint.
-
-
-# NEXT WIP
 
 ## Installation
 
