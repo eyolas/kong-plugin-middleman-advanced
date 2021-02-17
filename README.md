@@ -25,17 +25,24 @@ list of change :
 
 payload :
 ```lua
- local payload_body = [[{"certificate":]] .. raw_cert .. [[,"credential":]] .. raw_credential ..  [[,"kong_routing":]] .. raw_kong_routing .. [[,"request": {"headers":]] .. raw_json_headers .. [[,"params":]] .. raw_json_uri_args .. [[,"body":]] .. raw_json_body_data .. [[}}]]
- ```
-
-roadmap:
-- change config for list of service
+local payload = {
+    ['certificate'] = certificate,
+    ['consumer'] = consumer,
+    ['credential'] = credential,
+    ['kong_routing'] = kong_routing,
+    ['request'] = {
+      ['headers'] = headers,
+      ['params'] = params,
+      ['body'] = json_body,
+    }
+  }
+```
 
 
 ## Description
 
 In some cases, you may need to validate a request to a separate server or service using custom logic before Kong proxies it to your API.
-Middleman enables you to do that by allowing you to make an extra HTTP request before calling an API endpoint.
+Middleman enables you to do that by allowing you to make an extra HTTP requests before calling an API endpoint.
 
 
 # NEXT WIP
@@ -65,40 +72,105 @@ $ http POST :8001/services/{api}/plugins name=middleman-advanced config:='{ "ser
 <td>The name of the plugin to use, in this case: <code>middleman</code></td>
 </tr>
 <tr>
-<td><code>config.url</code><br><em>required</em></td>
+<td><code>config.services</code><br><em>required</em></td>
+<td></td>
+<td>The list of services witch the plugin make a JSON <code>POST</code></td>
+</tr>
+
+</tbody></table><br />
+
+### Service config
+<table><thead>
+<tr>
+<th>form parameter</th>
+<th>default</th>
+<th>description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>url</code><br><em>required</em></td>
 <td></td>
 <td>The URL to which the plugin will make a JSON <code>POST</code> request before proxying the original request.</td>
 </tr>
 <tr>
-<td><code>config.response</code><br><em>required</em></td>
-<td></td>
+<td><code>response</code><br><em>required</em></td>
+<td>table</td>
 <td>The type of response the middleman service is going to respond with</td>
 </tr>
 <tr>
-<td><code>config.timeout</code></td>
-<td></td>
+<td><code>timeout</code></td>
+<td>10000</td>
 <td>Timeout (miliseconds) for the request to the URL specified above. Default value is 10000.</td>
 </tr>
 <tr>
-<td><code>config.keepalive</code></td>
-<td></td>
+<td><code>keepalive</code></td>
+<td>60000</td>
 <td>Keepalive time (miliseconds) for the request to the URL specified above. Default value is 60000.</td>
+</tr>
+<tr>
+<td><code>include_cert</code></td>
+<td>false</td>
+<td>Include the original certificate in JSON POST</td>
+</tr>
+<tr>
+<td><code>include_credential</code></td>
+<td>false</td>
+<td>Include the credential in JSON POST</td>
+</tr>
+<tr>
+<td><code>include_consumer</code></td>
+<td>false</td>
+<td>Include the consumer in JSON POST</td>
+</tr>
+<tr>
+<td><code>include_route</code></td>
+<td>false</td>
+<td>Include the route in JSON POST</td>
 </tr>
 </tbody></table>
 
 Middleman will execute a JSON <code>POST</code> request to the specified <code>url</code> with the following body:
 
+JSON POST
 <table>
     <tr>
         <th>Attribute</th>
         <th>Description</th>
     </tr>
     <tr>
-    <td><code>body_data</code></td>
+    <td><code>certificate</code></td>
+    <td><small>The certificate of the original request if include_credential <br/> see resty_kong_tls.get_full_client_certificate_chain()</small></td>
+    </tr>
+    <tr>
+        <td><code>consumer</code></td>
+        <td><small>The consumer of the original request <br/> see kong.client.get_consumer()</small></td>
+    </tr>
+    <tr>
+        <td><code>credential</code></td>
+        <td><small>The consumer of the original request <br/> see kong.client.get_credential()</small></td>
+    </tr>
+    <tr>
+        <td><code>kong_routing</code></td>
+        <td><small>The kong_routing of the original request <br/> see kong.router.get_route() and kong.router.get_service()</small></td>
+    </tr>
+    <tr>
+        <td><code>request</code></td>
+        <td><small>The request of the original request <br /> see the next table : request</small></td>
+    </tr>
+</table>
+
+Request
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+    <td><code>body</code></td>
     <td><small>The body of the original request</small></td>
     </tr>
     <tr>
-        <td><code>url_args</code></td>
+        <td><code>params</code></td>
         <td><small>The url arguments of the original request</small></td>
     </tr>
     <tr>
@@ -110,7 +182,7 @@ Middleman will execute a JSON <code>POST</code> request to the specified <code>u
 In the scope of your own endpoint, you may validate any of these attributes and accept or reject the request according to your needs. If an HTTP response code of 299 or less is returned, the request is accepted. Any response code above 299 will cause the request to be rejected.  
 
 ## Author
-Panagis Tselentis
+David TOUZET
 
 ## License
 <pre>
