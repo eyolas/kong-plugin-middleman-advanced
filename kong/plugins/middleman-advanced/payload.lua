@@ -30,7 +30,7 @@ function _M.compose_payload(parsed_url, conf)
   end
 
   local json_body
-  if headers["content-type"] == 'application/json' then
+  if headers["content-type"] == 'application/json' and body_data ~= nil then
     json_body = JSON.decode(body_data)
   else
     json_body = body_data
