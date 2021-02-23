@@ -1,5 +1,6 @@
 local JSON = require "kong.plugins.middleman-advanced.json"
 local resty_kong_tls = require("resty.kong.tls")
+local URL = require "kong.plugins.middleman-advanced.url"
 
 
 local get_body = ngx.req.get_body_data
@@ -63,9 +64,10 @@ function _M.compose_payload(parsed_url, conf)
     }
   end
 
+
   local params
-  if next(uri_args) then
-    params = uri_args
+  if ngx.var.QUERY_STRING then
+    params = URL.parseQuery(ngx.var.QUERY_STRING)
   end
 
 
